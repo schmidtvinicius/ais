@@ -15,14 +15,17 @@ def calculate_roc_auc_components(data, step_size = 0.0001):
     Calculate the AUC metric, true positive rate (tpr) and false positive rate (fpr).
     """
 
-    score = data["anomaly_score"].values
-    label = data["label"].values
+    score = data["anomaly_score"].values.astype(float)
+    label = data["label"].values.astype(int)
 
     # Sort scores and corresponding labels
     sorted_indices = np.argsort(score)
     sorted_score = score[sorted_indices]
     
     # normalize the score from 0 to 1
+    print(sorted_score.min())
+    print(sorted_score.max())
+    
     sorted_score = (sorted_score - sorted_score.min()) / (sorted_score.max() - sorted_score.min())
     sorted_label = label[sorted_indices]
 

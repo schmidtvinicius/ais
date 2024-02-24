@@ -13,7 +13,7 @@ def compute_scores(alphabet_file:str, train_file: str, test_file: str, r=4, n=10
         "",
         str(
             subprocess.check_output(
-                f"java -jar -alphabet {alphabet_file} negsel2.jar -self {train_file} -n {n} -r {r} -c -l < {test_file}",
+                f"java -jar negsel2.jar -alphabet {alphabet_file} -self {train_file} -n {n} -r {r} -c -l < {test_file}",
                 shell=True
             )
         )
@@ -25,18 +25,18 @@ def apply_model(alphaber_file_path, train_word_dataset, test_word_dataset, n, r)
     Apply the model.
     """
     # create a file with the train word dataset
-    with open("train_word_dataset.txt", "w") as file:
+    with open("train.train", "w") as file:
         for word in train_word_dataset:
             file.write(word + "\n")
     
     # create a file with the word dataset
-    with open("test_word_dataset.txt", "w") as file:
+    with open("test.test", "w") as file:
         for word in test_word_dataset:
             file.write(word + "\n")
 
 
     # compute scores
-    result = compute_scores(alphaber_file_path, "train_word_dataset.txt", "test_word_dataset.txt", r, n)
+    result = compute_scores(alphaber_file_path, "train.train", "test.test", r, n)
 
     return result
 
@@ -45,6 +45,9 @@ def get_anomally_score(result, association_vetor, label_file, aggregation_functi
     """
     Get the anomally score from the result based on a aggregation function.
     """
+    # print(result)
+    # print(association_vetor)
+
     if aggregation_function not in ["mean"]:
         raise ValueError("aggregation_function must be 'mean'")
 
@@ -59,11 +62,18 @@ def get_anomally_score(result, association_vetor, label_file, aggregation_functi
     final_result = [[] for i in range(label.shape[0])]
     
     for i in range(len(result)):
-        final_result[association_vetor[i]].append(result[i])
+        for j in range(len(result[i])):
+            if result is not None:
+                final_result[association_vetor[i]].append(float(result[i]))
 
     if aggregation_function == "mean":
         for i in range(len(final_result)):
-            label["anomaly_score"].iloc[i] = np.mean(final_result[i])
+            try:
+                label["anomaly_score"].iloc[i] = np.mean(final_result[i])
+            except Exception as e:
+                print(f"Error on index {i}")
+                print(f"final_result[i]: {final_result[i]}")
+                raise e
     
     return label
 
@@ -77,8 +87,8 @@ def save_anomally_score(label, output_file):
 
 def main(
     alphaber_file,
-    training_data_file,
-    word_dataset_file,
+    train_data_file,
+    test_dataset_file,
     n,
     r,
     label_file,
@@ -89,13 +99,13 @@ def main(
     Main function.
     """
     print("Getting train dataset from file...")
-    train_word_dataset, _ = get_new_dataset_from_file(training_data_file, n, complete_character)
+    train_word_dataset, _ = get_new_dataset_from_file(train_data_file, n, complete_character)
     
     print("Getting new test dataset from file...")
-    test_word_dataset, association_vetor = get_new_dataset_from_file(word_dataset_file, n, complete_character)
+    test_word_dataset, association_vetor = get_new_dataset_from_file(test_dataset_file, n, complete_character)
     
     print("Applying model...")
-    result = apply_model(alphaber_file, train_word_dataset, test_word_dataset, n, r, complete_character)
+    result = apply_model(alphaber_file, train_word_dataset, test_word_dataset, n, r)
     
     print("Getting anomally score for each word...")
     label = get_anomally_score(result, association_vetor, label_file)

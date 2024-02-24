@@ -17,8 +17,8 @@ def plot_roc_auc(fprs, tprs, auc_metric, n, r):
 
 def plot_roc_auc_from_file(file_path, n, r):
     data = get_results_from_file(file_path)
-    auc_metric, fprs, tprs = calculate_roc_auc_components(data)
-    plot_roc_auc(fprs, tprs, auc_metric, n, r)
+    auc_value, fprs, tprs = calculate_roc_auc_components(data)
+    plot_roc_auc(fprs, tprs, auc_value, n, r)
 
 
 def plot_auc_optimization(n, rs, auc_values):

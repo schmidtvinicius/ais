@@ -49,8 +49,8 @@ def get_new_dataset_from_file(file_path, size, complete_character = "_"):
     word_dataset = transfom_dataset_to_split_dataset(get_dataset_from_file(file_path), size, complete_character)
 
     association_vetor = []
-    for i in (word_dataset):
-        for j in i:
+    for i, r in enumerate(word_dataset):
+        for _ in r:
             association_vetor.append(i)
 
     # make word dataset 1d
