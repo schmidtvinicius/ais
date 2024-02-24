@@ -1,3 +1,17 @@
+def merge_datasets(filenames, output_filename):
+    """
+    Merge datasets from a list of filenames.
+    """
+    dataset = []
+    for filename in filenames:
+        with open(filename, "r") as file:
+            dataset += file.read().splitlines()
+    
+    with open(output_filename, "w") as file:
+        for line in dataset:
+            file.write(line + "\n")
+
+
 def split_string_based_on_size(string, size, complete_character = "_"):
     """
     Split a string into a list of strings based on a given size.
