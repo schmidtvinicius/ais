@@ -23,8 +23,6 @@ def calculate_roc_auc_components(data, step_size = 0.0001):
     sorted_score = score[sorted_indices]
     
     # normalize the score from 0 to 1
-    print(sorted_score.min())
-    print(sorted_score.max())
     
     sorted_score = (sorted_score - sorted_score.min()) / (sorted_score.max() - sorted_score.min())
     sorted_label = label[sorted_indices]
