@@ -13,7 +13,7 @@ def compute_scores(train_file: str, test_file: str, r=4, n=10, alphabet_file_pat
         "",
         str(
             subprocess.check_output(
-                f"java -jar negsel2.jar {f'-alphabet {alphabet_file_path}' if alphabet_file_path != '' else ''} -self {train_file} -n {n} -r {r} -c -l < {test_file}",
+                f"java -jar negsel2.jar {f'-alphabet {alphabet_file_path} ' if alphabet_file_path != '' else ''}-self {train_file} -n {n} -r {r} -c -l -d 9 < {test_file}",
                 shell=True
             )
         )
@@ -45,8 +45,6 @@ def get_anomally_score(result, association_vetor, label_file, aggregation_functi
     """
     Get the anomally score from the result based on a aggregation function.
     """
-    # print(result)
-    # print(association_vetor)
 
     if aggregation_function not in ["mean"]:
         raise ValueError("aggregation_function must be 'mean'")
